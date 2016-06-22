@@ -18,7 +18,7 @@
 	fun(Resp) ->
         case xmerl_xpath:string(XPath, Xml, [{namespace, Ns}]) of
             [_|_] = List ->
-                Resp#Record{Field = lists:map(TransFun, [V || #TargetType{value = V} <- List])};
+                Resp#Record{Field = [TransFun(V) || #TargetType{value = V} <- List]};
             _ -> NotFoundRet
         end
     end).
