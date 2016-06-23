@@ -121,6 +121,7 @@ start_ets() ->
         ets:new(esaml_privkey_cache, [set, public, named_table]),
         ets:new(esaml_certbin_cache, [set, public, named_table]),
         ets:new(esaml_idp_meta_cache, [set, public, named_table]),
+        ets:new(esaml_req_id_tracking, [set, public, named_table]),
         ets_table_owner()
     end)}.
 
@@ -148,6 +149,18 @@ load_private_key(Path) ->
             end,
             ets:insert(esaml_privkey_cache, {Path, Key}),
             Key
+    end.
+-spec save_req_id(Id :: string()) -> atom().
+save_req_id(Id) ->
+    ets:insert(esaml_req_id_tracking, Id).
+
+-spec validate_response_to_id(Id :: string()) -> atom().
+validate_response_to_id(Id) ->
+    case ets:first(esaml_req_id_tracking, Id) of
+        Id ->
+              ets:delete(esaml_req_id_tracking, Id),
+              true;
+        _ ->  false
     end.
 
 -spec load_certificate(Path :: string()) -> binary().

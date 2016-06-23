@@ -24,9 +24,11 @@
 %% @private
 -spec add_xml_id(xml()) -> xml().
 add_xml_id(Xml) ->
+    UniqueId = esaml_util:unique_id(),
+    esaml_util:save_req_id(UniqueId),
     Xml#xmlElement{attributes = Xml#xmlElement.attributes ++ [
         #xmlAttribute{name = 'ID',
-            value = esaml_util:unique_id(),
+            value = UniqueId,
             namespace = #xmlNamespace{}}
         ]}.
 
